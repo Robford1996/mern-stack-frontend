@@ -7,7 +7,9 @@ import Show from "../pages/Show";
 function Main(props) {
   const [people, setPeople] = useState(null);
 
-  const URL = "https://mern-titan-app.herokuapp.com/";
+  const URL = "http://localhost:4000/people/";
+
+  //   const URL = "https://mern-titan-app.herokuapp.com/";
 
   const getPeople = async () => {
     const response = await fetch(URL);
@@ -26,6 +28,24 @@ function Main(props) {
     getPeople();
   };
 
+  const updatePeople = async (person, id) => {
+    await fetch(URL + id, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "Application/json",
+      },
+      body: JSON.stringify(person),
+    });
+    getPeople();
+  };
+
+  const deletePeople = async (id) => {
+    await fetch(URL + id, {
+      method: "DELETE",
+    });
+    getPeople();
+  };
+
   useEffect(() => {
     getPeople();
   }, []);
@@ -36,7 +56,17 @@ function Main(props) {
         <Route exact path="/">
           <Index people={people} createPeople={createPeople} />
         </Route>
-        <Route path="/people/:id" render={(rp) => <Show {...rp} />} />
+        <Route
+          path="/people/:id"
+          render={(rp) => (
+            <Show
+              people={people}
+              updatePeople={updatePeople}
+              deletePeople={deletePeople}
+              {...rp}
+            />
+          )}
+        />
       </Switch>
     </main>
   );
